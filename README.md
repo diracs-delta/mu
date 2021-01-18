@@ -26,11 +26,11 @@ refresh the page if any issues appear off.
 
 - [`ffmpeg`](https://ffmpeg.org) for parsing audio duration on file upload
 
-- ['sqlite'](https://sqlite.org) database
+- [`sqlite`](https://sqlite.org) database
 
 - [`yarn`](https://yarnpkg.com/) package manager
 
-- ['serve'](https://www.npmjs.com/package/serve) to serve compiled web app
+- [`serve`](https://www.npmjs.com/package/serve) to serve compiled web app
 (install via `yarn global add serve`)
 
 It is suggested to use [`rvm`](https://rvm.io) to handle the installation of
@@ -43,11 +43,14 @@ From the project root, start the database server:
 ```
 cd db
 bundle install
-RAILS_ENV=production rails server
 RAILS_ENV=production rails db:create db:migrate db:seed
+RAILS_ENV=production rails server
 ```
 
-This should start the database on port 3000.
+This should start the database on port 3000. Currently this database is
+unencrypted and in development mode, as the API is extremely early in
+development and nobody should really be using this for production yet
+anyways.
 
 Then, from the project root, start the web app server:
 
@@ -60,9 +63,9 @@ serve -s build
 
 This should start the web app on port 3001.
 
-By default, the database ships with royalty-free
-music for development and testing, provided generously by Kevin Macleod. It
-also initializes a single playlist named 'favorites'.
+By default, the database ships with royalty-free music for development and
+testing, provided generously by Kevin Macleod. It also initializes a single
+playlist named 'favorites'.
 
 Preferably, you should seed the database with some songs of your own, so you
 don't have to add all of your songs manually via the rails console or the web
@@ -106,7 +109,7 @@ $ cd [ARTIST]/[ALBUM]
 $ youtube-dl -o "[%(playlist_index)s]%(title)s.%(ext)s" -x [ALBUM_PLAYLIST_URL]
 ```
 
-Full-resolution album art can be sourced from the [album art exchange](https://albumartexchange.com). 
+Full-resolution album art can be sourced from the [album art exchange](https://albumartexchange.com).
 
 *Note*: I do not condone, endorse, or encourage copyright infringement. Please
 support the artists you enjoy music from. This command should be used
