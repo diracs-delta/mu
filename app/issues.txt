@@ -1,0 +1,13 @@
+explicit requirements
+  player
+	shuffle button
+
+  tracks
+
+implicit requirements
+  player
+	do not lag on spamming next and previous
+
+  library
+
+
