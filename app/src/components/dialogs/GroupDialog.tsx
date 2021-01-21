@@ -84,4 +84,47 @@ class GroupDialog extends React.Component<Props, State>{
   }
 }
 
+// interface TypedAlbumSongs {
+//   list: Song[]
+//   type: 'albumSongs'
+// }
+
+// interface TypedPlaylistSongs {
+//   list: PlaylistSong[]
+//   type: 'playlistSongs'
+// }
+
+// interface LoadingSongs {
+//   type: 'loading'
+// }
+
+// type TypedGroupSongs = TypedAlbumSongs | TypedPlaylistSongs | LoadingSongs
+
+// const [songs, setSongs]
+
+// function GroupDialog (props: Props) {
+//   const [songs, setSongs] = useState({
+//     type: 'loading'
+//   } as TypedGroupSongs)
+
+//   useEffect(() => {
+//     switch (props.group.type) {
+//       case 'album': {
+//         api.fetchSongs({ album_id: props.group.id })
+//           .then(songs => setSongs({ list: songs, type: 'albumSongs' }))
+//         break
+//       }
+//       case 'playlist': {
+//         api.fetchPlaylistSongs(props.group)
+//           .then(songs => setSongs({ list: songs, type: 'playlistSongs' } as TypedPlaylistSongs))
+//         break
+//       }
+//     }
+//   })
+
+//   function renderDialogContent () {
+
+//   }
+// }
+
 export default GroupDialog

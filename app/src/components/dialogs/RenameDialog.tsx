@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as api from 'src/lib/api'
 
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@material-ui/core";
@@ -8,45 +8,37 @@ import { Button } from '@material-ui/core'
 interface Props {
   record: TypedRecord
   open: boolean
-  closeDialog: () => void
+  onClose: () => void
 }
 
-interface State {
-  newName: string
-}
+function RenameDialog (props: Props) {
+  const [newName, setNewName] = useState('')
 
-class RenameDialog extends React.Component<Props, State> {
-  renameRecord () {
-    api.renameRecord(this.props.record, this.state.newName)
-    this.props.closeDialog()
+  function renameRecord () {
+    api.renameRecord(props.record, newName)
+    props.onClose()
   }
 
-  set newName (newName: string) {
-    this.setState({ newName })
-  }
-
-  render () {
-    return (
-      <Dialog
-        open={this.props.open}
-        onClose={this.props.closeDialog}
-      >
-        <DialogTitle>
-          Rename {this.props.record.type}
-        </DialogTitle>
-        <DialogContent>
-          <TextField fullWidth onChange={(e) => this.newName = e.target.value} label='New name' />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => this.renameRecord()}
-          >
-            Upload
-          </Button>
-        </DialogActions>
-      </Dialog>
-    )
-  }
+  return (
+    <Dialog
+      open={props.open}
+      onClose={props.onClose}
+    >
+      <DialogTitle>
+        Rename {props.record.type}
+      </DialogTitle>
+      <DialogContent>
+        <TextField fullWidth onChange={(e) => setNewName(e.target.value)} label='New name' />
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={renameRecord}
+        >
+          Upload
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
 }
 
 export default RenameDialog

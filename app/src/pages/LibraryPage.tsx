@@ -1,4 +1,4 @@
-import { CircularProgress, Container, GridList, GridListTile, GridListTileBar } from '@material-ui/core'
+import { CircularProgress, Container, GridList } from '@material-ui/core'
 import React from 'react'
 
 import AlbumTile from 'src/components/tiles/AlbumTile'

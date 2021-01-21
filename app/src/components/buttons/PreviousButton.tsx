@@ -1,10 +1,11 @@
 import { SkipPrevious } from '@material-ui/icons'
 import { IconButton } from '@material-ui/core'
 
-interface PreviousButtonProps {
+interface Props {
   previous: () => void
 }
-export default function PreviousButton (props: PreviousButtonProps) {
+
+function PreviousButton (props: Props) {
   return (
     <IconButton
       color="primary" 
@@ -14,3 +15,5 @@ export default function PreviousButton (props: PreviousButtonProps) {
     </IconButton>
   )
 }
+
+export default PreviousButton

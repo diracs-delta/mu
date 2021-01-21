@@ -2,27 +2,33 @@ import React from 'react'
 import { CircularProgress, IconButton } from '@material-ui/core'
 import { PlayArrow, Pause } from '@material-ui/icons'
 
-interface PlayButtonState {}
-interface PlayButtonProps {
+interface Props {
   playbackState: 'paused' | 'playing' | 'loading' | 'initial'
   togglePlayback: () => void
 }
 
-function getPlaybackIcon (state: PlayButtonProps["playbackState"]) {
+function getPlaybackIcon (state: Props['playbackState']) {
   let PlaybackIcon;
-  if (state === 'paused') {
-    PlaybackIcon = PlayArrow
-  } else if (state === 'playing' ) {
-    PlaybackIcon = Pause
-  } else {
-    PlaybackIcon = CircularProgress
+  switch (state) {
+    case 'paused': {
+      PlaybackIcon = PlayArrow
+      break
+    }
+    case 'playing': {
+      PlaybackIcon = Pause
+      break
+    }
+    default: {
+      PlaybackIcon = CircularProgress
+    }
   }
+
   return (
     <PlaybackIcon style={{ fontSize: 60 }}/>
   )
 }
 
-export default function PlayButton (props: PlayButtonProps) {
+function PlayButton (props: Props) {
   return (
     <IconButton
       color="primary"
@@ -33,3 +39,5 @@ export default function PlayButton (props: PlayButtonProps) {
     </IconButton>
   )
 }
+
+export default PlayButton

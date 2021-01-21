@@ -1,14 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as api from 'src/lib/api'
 import SongList from 'src/components/lists/SongList'
 
-import { Menu } from '@material-ui/core'
 import { TextField } from '@material-ui/core'
 import { CircularProgress } from '@material-ui/core'
 import PlaylistList from 'src/components/lists/PlaylistList'
-
-export type SearchState = 'none' | 'searching' | 'searched'
-export type SearchGroup = 'songs' | 'playlists'
 
 interface PlaylistSearch {
   type: 'playlists'
@@ -21,117 +17,105 @@ interface SongSearch {
 }
 
 type Search = null | PlaylistSearch | SongSearch
+export type SearchState = 'none' | 'searching' | 'searched'
+export type SearchGroup = 'songs' | 'playlists'
+type SearchEvent = React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
 
 interface Props {
   searchIn: SearchGroup
   onPlaylistSelect?: (playlist: Playlist) => void
 }
 
-interface State {
-  searchState: SearchState
-  search: Search
-}
+function BaseSearchInput (props: Props) {
+  const [searchState, setSearchState] = useState('none' as SearchState)
+  const [search, setSearch] = useState(null as Search)
+  let timeout: number | undefined = undefined
 
-class BaseSearchInput extends React.Component<Props, State> {
-  timeout: number | undefined
-
-  constructor (props: Props) {
-    super(props)
-    this.state = {
-      searchState: 'none',
-      search: null,
-    }
-    this.timeout = undefined
-  }
-
-  searchGroup (searchQuery: string) {
-    if (this.props.searchIn === 'songs') {
-      api.fetchSongs({ q: searchQuery }).then((results) => {
-        this.setState({
-          searchState: 'searched',
-          search: { results, type: 'songs' }
+  function searchGroup (searchQuery: string) {
+    switch (props.searchIn) {
+      case 'songs': {
+        api.fetchSongs({ q: searchQuery }).then((results) => {
+          setSearchState('searched')
+          setSearch({ results, type: 'songs' })
         })
-      })
-    } else if (this.props.searchIn === 'playlists') {
-      api.fetchPlaylists({ q: searchQuery }).then((results) => {
-        this.setState({
-          searchState: 'searched',
-          search: { results, type: 'playlists' }
+        break
+      }
+      case 'playlists': {
+        api.fetchPlaylists({ q: searchQuery }).then((results) => {
+          setSearchState('searched')
+          setSearch({ results, type: 'playlists' })
         })
-      })
+        break
+      }
     }
   }
 
-  onSearch (event: any) {
-    const searchQuery = event.target.value as string
+  function onSearch (event: SearchEvent) {
+    const searchQuery = event.target.value
     if (searchQuery === '') {
-      this.setState({
-        searchState: 'none',
-        search: null
-      })
+      setSearchState('none')
+      setSearch(null)
       return
     }
-    this.setState({ searchState: 'searching' })
-    this.searchGroup(searchQuery)
+    setSearchState('searching')
+    searchGroup(searchQuery)
   }
 
 
-  newTimeout (event: React.ChangeEvent<Element>) {
-    this.timeout = window.setTimeout(() => {
-      this.onSearch(event)
-      this.timeout = undefined
+  function newTimeout (event: SearchEvent) {
+    timeout = window.setTimeout(() => {
+      onSearch(event)
+      timeout = undefined
     }, 500)
   }
 
-  waitAndSearch (event: React.ChangeEvent<Element>) {
-    if (this.timeout === undefined) {
-      this.newTimeout(event)
+  function waitAndSearch (event: SearchEvent) {
+    if (timeout === undefined) {
+      newTimeout(event)
     } else {
-      clearTimeout(this.timeout)
-      this.newTimeout(event)
+      clearTimeout(timeout)
+      newTimeout(event)
     }
   }
 
-  renderSearchResultList () {
-    if (this.state.search === null) {
+  function renderSearchResultList () {
+    if (search === null) {
       return null
-    } else if (this.state.search.type === 'songs') {
+    } else if (search.type === 'songs') {
       return (
-        <SongList songs={this.state.search.results} />
+        <SongList songs={search.results} />
       )
-    } else if (this.state.search.type === 'playlists') {
+    } else if (search.type === 'playlists') {
       return (
         <PlaylistList
-          playlists={this.state.search.results}
-          onSelect={this.props.onPlaylistSelect}
+          playlists={search.results}
+          onSelect={props.onPlaylistSelect}
         />
       )
     }
   }
 
-  renderSearchResults () {
-    switch (this.state.searchState) {
+  function renderSearchResults () {
+    switch (searchState) {
       case 'none': {
         return null
       }
-
       case 'searching': {
         return (
           <CircularProgress />
         )
       }
-
       case 'searched': {
-        if (this.state.search === null) {
+        if (search === null) {
           return null
-        } else if (this.state.search.results.length === 0) {
+        } else if (search.results.length === 0) {
           return (
             <div>No search results found!</div>
           )
         } else {
           return (
             <div>
-              {this.renderSearchResultList()}
+              {renderSearchResultList()}
             </div>
           )
         }
@@ -139,18 +123,16 @@ class BaseSearchInput extends React.Component<Props, State> {
     }
   }
 
-  render () {
-    return (
-      <div>
-        <TextField
-          label='Search'
-          onChange={(e) => {this.waitAndSearch(e)}}
-        />
-        {this.renderSearchResults()}
-        <div style={{ height: 10 }} />
-      </div>
-    )
-  }
+  return (
+    <div>
+      <TextField
+        label='Search'
+        onChange={(e) => {waitAndSearch(e)}}
+      />
+      {renderSearchResults()}
+      <div style={{ height: 10 }} />
+    </div>
+  )
 }
 
 export default BaseSearchInput

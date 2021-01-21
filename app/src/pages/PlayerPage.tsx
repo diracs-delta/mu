@@ -2,7 +2,6 @@ import React from 'react'
 import { Container, Grid } from '@material-ui/core'
 import { WithStyles, withStyles } from '@material-ui/core/styles'
 
-import Time from 'src/components/Time'
 import GroupArtView from 'src/components/views/GroupArtView'
 import RepeatButton from 'src/components/buttons/RepeatButton'
 import PreviousButton from 'src/components/buttons/PreviousButton'
@@ -88,7 +87,6 @@ class Player extends React.Component<PlayerProps, PlayerState> {
             />
           </Grid>
         </Grid>
-        <Time />
       </Container>
     )
   }

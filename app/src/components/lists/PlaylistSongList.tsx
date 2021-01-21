@@ -7,10 +7,6 @@ interface Props {
   indexBy?: 'position' | 'album_index' | 'playlist_index'
 }
 
-interface State {
-  songs: PlaylistSong[]
-}
-
 function SongList (props: Props) {
   function renderSongs () {
     return props.songs.map((song, position) => {

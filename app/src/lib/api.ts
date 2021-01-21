@@ -184,10 +184,10 @@ export function fetchPlaylists (props: fetchPlaylistProps) {
 }
 
 interface uploadSongProps {
-  song_title: string
-  album_title: string
-  album_index: string
-  artist_name: string
+  songTitle: string
+  albumTitle: string
+  albumIndex: string
+  artistName: string
   file: File | undefined
 }
 
@@ -196,10 +196,10 @@ export function uploadSong (props: uploadSongProps) {
     throw new Error('File is undefined')
   }
   const form = new FormData()
-  form.append('song_title', props.song_title)
-  form.append('album_title', props.album_title)
-  form.append('album_index', props.album_index)
-  form.append('artist_name', props.artist_name)
+  form.append('song_title', props.songTitle)
+  form.append('album_title', props.albumTitle)
+  form.append('album_index', props.albumIndex)
+  form.append('artist_name', props.artistName)
   form.append('file', props.file)
 
   fetch(`${BASE_URL}/songs`, {

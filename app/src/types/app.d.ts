@@ -107,7 +107,7 @@ declare global {
     type: 'playlist'
   }
 
-  interface TypedPlaylistSong extends Song {
+  interface TypedPlaylistSong extends PlaylistSong {
     type: 'playlistSong'
   }
 
@@ -118,8 +118,8 @@ declare global {
     updated_at: string
   }
 
-  type Record = Song | Album | Playlist | PlaylistEntry
-  type TypedRecord = TypedSong | TypedAlbum | TypedPlaylist | TypedPlaylistEntry
+  type Record = Song | Album | Playlist | PlaylistSong
+  type TypedRecord = TypedSong | TypedAlbum | TypedPlaylist | TypedPlaylistSong
   type Group = Album | Playlist
   type TypedGroup = TypedAlbum | TypedPlaylist
 }

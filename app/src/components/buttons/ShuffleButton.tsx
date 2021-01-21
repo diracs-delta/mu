@@ -6,12 +6,12 @@ function getShuffleIcon (shuffle: boolean) {
   return <Shuffle color={color} />
 }
 
-interface ShuffleButtonProps {
+interface Props {
   shuffle: boolean
   toggleShuffle: () => void
 }
 
-export default function ShuffleButton (props: ShuffleButtonProps) {
+function ShuffleButton (props: Props) {
   return (
     <IconButton
       onClick={props.toggleShuffle}
@@ -20,3 +20,5 @@ export default function ShuffleButton (props: ShuffleButtonProps) {
     </IconButton>
   )
 }
+
+export default ShuffleButton
