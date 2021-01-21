@@ -46,6 +46,7 @@ interface AppState {
   index: number
   duration: number
   progress: number
+  volume: number
   playbackState: 'loading' | 'playing' | 'paused' | 'initial'
   repeatState: 'none' | 'queue' | 'single'
   shuffle: boolean
@@ -69,6 +70,7 @@ export default class App extends React.Component<AppProps, AppState> {
       index: 0,
       duration: 0,
       progress: 0,
+      volume: 1,
       playbackState: 'initial',
       repeatState: 'none',
       shuffle: false
@@ -81,6 +83,7 @@ export default class App extends React.Component<AppProps, AppState> {
     this.next = this.next.bind(this)
     this.setProgress = this.setProgress.bind(this)
     this.setQueue = this.setQueue.bind(this)
+    this.setVolume = this.setVolume.bind(this)
   }
 
   static _initNewQueue(queueSongs: Array<Song>) {
@@ -273,6 +276,14 @@ export default class App extends React.Component<AppProps, AppState> {
     this.currentAudio.seek(progress)
   }
 
+  setVolume (event: object, volume: number | number[]) {
+    if (volume instanceof Array) {
+      volume = volume[0]
+    }
+    this.setState({ volume })
+    Howler.volume(volume)
+  }
+
   iterRepeatState () {
     let newRepeatState: AppState['repeatState']
     if (this.state.repeatState === 'none') {
@@ -319,6 +330,8 @@ export default class App extends React.Component<AppProps, AppState> {
                 duration={this.state.duration}
                 progress={this.state.progress}
                 setProgress={this.setProgress}
+                volume={this.state.volume}
+                setVolume={this.setVolume}
                 currentSong={this.currentSong}
                 queue={this.state.queue}
                 repeatState={this.state.repeatState}

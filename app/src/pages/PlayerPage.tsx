@@ -2,7 +2,6 @@ import React from 'react'
 import { Container, Grid } from '@material-ui/core'
 import { WithStyles, withStyles } from '@material-ui/core/styles'
 
-// custom components
 import Time from 'src/components/Time'
 import GroupArtView from 'src/components/views/GroupArtView'
 import RepeatButton from 'src/components/buttons/RepeatButton'
@@ -12,6 +11,7 @@ import NextButton from 'src/components/buttons/NextButton'
 import ProgressSlider from 'src/components/sliders/ProgressSlider'
 import CollapsibleQueueList from 'src/components/lists/CollapsibleQueueList'
 import ShuffleButton from 'src/components/buttons/ShuffleButton'
+import VolumeSlider from 'src/components/sliders/VolumeSlider'
 
 /* CSS */
 const styles = {
@@ -31,6 +31,8 @@ interface PlayerProps extends WithStyles<typeof styles> {
   duration: number
   progress: number
   setProgress: (event: object, progress: number | number[]) => void
+  volume: number
+  setVolume: (event: object, progress: number | number[]) => void
   currentSong: PlayableSong
   queue: Array<PlayableSong>
   repeatState: 'none' | 'queue' | 'single'
@@ -71,6 +73,12 @@ class Player extends React.Component<PlayerProps, PlayerState> {
             <ShuffleButton
               shuffle={this.props.shuffle}
               toggleShuffle={this.props.toggleShuffle}
+            />
+          </Grid>
+          <Grid container>
+            <VolumeSlider
+              volume={this.props.volume}
+              setVolume={this.props.setVolume}
             />
           </Grid>
           <Grid>
