@@ -30,8 +30,6 @@ interface PlayerProps extends WithStyles<typeof styles> {
   duration: number
   progress: number
   setProgress: (event: object, progress: number | number[]) => void
-  volume: number
-  setVolume: (event: object, progress: number | number[]) => void
   currentSong: PlayableSong
   queue: Array<PlayableSong>
   repeatState: 'none' | 'queue' | 'single'
@@ -75,10 +73,7 @@ class Player extends React.Component<PlayerProps, PlayerState> {
             />
           </Grid>
           <Grid container>
-            <VolumeSlider
-              volume={this.props.volume}
-              setVolume={this.props.setVolume}
-            />
+            <VolumeSlider />
           </Grid>
           <Grid>
             <CollapsibleQueueList
