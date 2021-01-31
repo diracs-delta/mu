@@ -6,6 +6,8 @@ import PlayerPage from 'src/pages/PlayerPage'
 import LibraryPage from 'src/pages/LibraryPage'
 import PlaylistsPage from 'src/pages/PlaylistsPage'
 import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom'
+import { RootState } from './store'
+import { connect, ConnectedProps } from 'react-redux'
 
 const defaultInitQueue: Array<Song> = [
   {
@@ -40,17 +42,24 @@ const defaultInitQueue: Array<Song> = [
   }
 ]
 
-interface AppProps {}
+const mapStateToProps = (state: RootState) => ({
+  shuffle: state.player.shuffle,
+  repeat: state.player.repeat
+})
+
+const connectToStore = connect(mapStateToProps)
+
+type AppProps = ConnectedProps<typeof connectToStore>
+
 interface AppState {
   queue: Array<PlayableSong>
   index: number
   duration: number
   progress: number
   playbackState: 'loading' | 'playing' | 'paused' | 'initial'
-  repeatState: 'none' | 'queue' | 'single'
-  shuffle: boolean
 }
-export default class App extends React.Component<AppProps, AppState> {
+
+class App extends React.Component<AppProps, AppState> {
   animationID: number
   animating: boolean
 
@@ -69,9 +78,7 @@ export default class App extends React.Component<AppProps, AppState> {
       index: 0,
       duration: 0,
       progress: 0,
-      playbackState: 'initial',
-      repeatState: 'none',
-      shuffle: false
+      playbackState: 'initial'
     }
     console.log(this.state.queue)
     this._loadCurrentAudio()
@@ -175,17 +182,17 @@ export default class App extends React.Component<AppProps, AppState> {
    */
   next () {
     let newIndex
-    if (this.state.repeatState === 'single') {
+    if (this.props.repeat === 'single') {
       // if repeat state is single, keep index at current song
       newIndex = this.state.index
-    } else if (this.state.shuffle) {
+    } else if (this.props.shuffle) {
       // if in shuffle mode, pick a random distinct index
       const max = this.state.queue.length
       newIndex = Math.floor(Math.random() * max)
       do {
         newIndex = Math.floor(Math.random() * max)
       } while (newIndex === this.state.index)
-    } else if (this.state.repeatState === 'queue' && this.state.index === this.state.queue.length - 1) {
+    } else if (this.props.repeat === 'queue' && this.state.index === this.state.queue.length - 1) {
       // if repeat state is queue and at end of song, then set index to 0
       newIndex = 0
     } else if (this.state.index < this.state.queue.length - 1) {
@@ -223,22 +230,6 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   }
 
-  shuffle () {
-    this.setState({ shuffle: true })
-  }
-
-  unshuffle () {
-    this.setState({ shuffle: false })
-  }
-
-  toggleShuffle () {
-    if (this.state.shuffle) {
-      this.unshuffle()
-    } else {
-      this.shuffle()
-    }
-  }
-
   _updateProgress () {
     this.animationID = requestAnimationFrame(() => {
       console.log('executing frame: ' + this.animationID)
@@ -271,20 +262,6 @@ export default class App extends React.Component<AppProps, AppState> {
     }
     this.setState({ progress })
     this.currentAudio.seek(progress)
-  }
-
-  iterRepeatState () {
-    let newRepeatState: AppState['repeatState']
-    if (this.state.repeatState === 'none') {
-      newRepeatState = 'queue'
-    } else if (this.state.repeatState === 'queue') {
-      newRepeatState = 'single'
-    } else {
-      newRepeatState = 'none'
-    }
-    this.setState({
-      repeatState: newRepeatState
-    })
   }
 
   get currentSong () {
@@ -321,10 +298,6 @@ export default class App extends React.Component<AppProps, AppState> {
                 setProgress={this.setProgress}
                 currentSong={this.currentSong}
                 queue={this.state.queue}
-                repeatState={this.state.repeatState}
-                iterRepeatState={() => this.iterRepeatState()}
-                shuffle={this.state.shuffle}
-                toggleShuffle={() => this.toggleShuffle()}
               />
             </Route>
             <Route path="/library">
@@ -346,3 +319,5 @@ export default class App extends React.Component<AppProps, AppState> {
     )
   }
 }
+
+export default connectToStore(App)

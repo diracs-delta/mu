@@ -32,10 +32,6 @@ interface PlayerProps extends WithStyles<typeof styles> {
   setProgress: (event: object, progress: number | number[]) => void
   currentSong: PlayableSong
   queue: Array<PlayableSong>
-  repeatState: 'none' | 'queue' | 'single'
-  iterRepeatState: () => void
-  shuffle: boolean
-  toggleShuffle: () => void
 }
 
 interface PlayerState {}
@@ -57,20 +53,14 @@ class Player extends React.Component<PlayerProps, PlayerState> {
             />
           </Grid>
           <Grid container justify="center">
-            <RepeatButton
-              repeatState={this.props.repeatState}
-              iterRepeatState={this.props.iterRepeatState}
-            />
+            <RepeatButton />
             <PreviousButton previous={this.props.previous} />
             <PlayButton
               playbackState={this.props.playbackState}
               togglePlayback={this.props.togglePlayback}
             />
             <NextButton next={this.props.next} />
-            <ShuffleButton
-              shuffle={this.props.shuffle}
-              toggleShuffle={this.props.toggleShuffle}
-            />
+            <ShuffleButton />
           </Grid>
           <Grid container>
             <VolumeSlider />
