@@ -7,6 +7,7 @@ export interface PlayerState {
   volume: number
   duration: number
   progress: number
+  seekValue: number
   repeat: 'none' | 'queue' | 'single'
   shuffle: boolean
 }
@@ -52,6 +53,7 @@ const initialState: PlayerState = {
   volume: 1.0,
   duration: 0,
   progress: 0,
+  seekValue: 0,
   repeat: 'none',
   shuffle: false
 }
@@ -85,6 +87,15 @@ const playerSlice = createSlice({
       }
     },
     setDuration (state, action: PayloadAction<number>) {
+      state.duration = action.payload
+    },
+    setProgress (state, action: PayloadAction<number>) {
+      state.progress = action.payload
+    },
+    seekTo (state, action: PayloadAction<number>) {
+      console.log('why this no work')
+      state.progress = action.payload
+      state.seekValue = action.payload
     }
   }
 })
@@ -93,5 +104,8 @@ export default playerSlice.reducer
 export const {
   setVolume,
   toggleShuffle,
-  incrementRepeat
+  incrementRepeat,
+  setDuration,
+  setProgress,
+  seekTo
 } = playerSlice.actions

@@ -27,9 +27,6 @@ interface PlayerProps extends WithStyles<typeof styles> {
   playbackState: 'paused' | 'playing' | 'loading' | 'initial'
   next: () => void
   previous: () => void
-  duration: number
-  progress: number
-  setProgress: (event: object, progress: number | number[]) => void
   currentSong: PlayableSong
   queue: Array<PlayableSong>
 }
@@ -46,11 +43,7 @@ class Player extends React.Component<PlayerProps, PlayerState> {
             <GroupArtView size={400} groupType='album' id={this.props.currentSong.album_id}/>
           </Grid>
           <Grid container>
-            <ProgressSlider
-              progress={this.props.progress}
-              duration={this.props.duration}
-              setProgress={this.props.setProgress}
-            />
+            <ProgressSlider />
           </Grid>
           <Grid container justify="center">
             <RepeatButton />

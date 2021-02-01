@@ -6,7 +6,7 @@ import PlayerPage from 'src/pages/PlayerPage'
 import LibraryPage from 'src/pages/LibraryPage'
 import PlaylistsPage from 'src/pages/PlaylistsPage'
 import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom'
-import { RootState } from './store'
+import { RootState } from 'src/store'
 import { connect, ConnectedProps } from 'react-redux'
 
 const defaultInitQueue: Array<Song> = [
@@ -44,7 +44,10 @@ const defaultInitQueue: Array<Song> = [
 
 const mapStateToProps = (state: RootState) => ({
   shuffle: state.player.shuffle,
-  repeat: state.player.repeat
+  repeat: state.player.repeat,
+  duration: state.player.duration,
+  progress: state.player.progress,
+  seekValue: state.player.seekValue
 })
 
 const connectToStore = connect(mapStateToProps)
@@ -54,8 +57,6 @@ type AppProps = ConnectedProps<typeof connectToStore>
 interface AppState {
   queue: Array<PlayableSong>
   index: number
-  duration: number
-  progress: number
   playbackState: 'loading' | 'playing' | 'paused' | 'initial'
 }
 
@@ -76,8 +77,6 @@ class App extends React.Component<AppProps, AppState> {
     this.state = {
       queue: App._initNewQueue(initQueue),
       index: 0,
-      duration: 0,
-      progress: 0,
       playbackState: 'initial'
     }
     console.log(this.state.queue)
@@ -86,7 +85,6 @@ class App extends React.Component<AppProps, AppState> {
     this.togglePlayback = this.togglePlayback.bind(this)
     this.previous = this.previous.bind(this)
     this.next = this.next.bind(this)
-    this.setProgress = this.setProgress.bind(this)
     this.setQueue = this.setQueue.bind(this)
   }
 
@@ -124,9 +122,10 @@ class App extends React.Component<AppProps, AppState> {
       this.setState({ playbackState: 'loading' })
       this.currentAudio.load()
       this.currentAudio.once('load', () => {
-        this.setState({
-          playbackState: 'paused',
-          duration: this.currentAudio.duration()
+        this.setState({ playbackState: 'paused' })
+        this.props.dispatch({
+          type: 'player/setDuration',
+          payload: this.currentAudio.duration()
         })
         if (onLoad !== undefined) {
           onLoad()
@@ -139,10 +138,20 @@ class App extends React.Component<AppProps, AppState> {
       throw new Error('App#_loadCurrentAudio called twice! This should never happen.')
     } else {
       // song already loaded, just set the current song duration and call onLoad
-      this.setState({ duration: this.currentAudio.duration() })
+      this.props.dispatch({
+        type: 'player/setDuration',
+        payload: this.currentAudio.duration()
+      })
       if (onLoad !== undefined) {
         onLoad()
       }
+    }
+  }
+
+  componentDidUpdate (prevProps: AppProps, prevState: AppState) {
+    // seek audio if updated
+    if (prevProps.seekValue !== this.props.seekValue) {
+      this.currentAudio.seek(this.props.seekValue)
     }
   }
 
@@ -233,8 +242,9 @@ class App extends React.Component<AppProps, AppState> {
   _updateProgress () {
     this.animationID = requestAnimationFrame(() => {
       console.log('executing frame: ' + this.animationID)
-      this.setState({
-        progress: this.currentAudio.seek() as number
+      this.props.dispatch({
+        type: 'player/setProgress',
+        payload: this.currentAudio.seek() as number
       })
       this._updateProgress()
     })
@@ -254,14 +264,6 @@ class App extends React.Component<AppProps, AppState> {
       this.animating = false
       console.log('stopped frame: ' + this.animationID)
     }
-  }
-
-  setProgress (event: object, progress: number | number[]) {
-    if (progress instanceof Array) {
-      progress = progress[0]
-    }
-    this.setState({ progress })
-    this.currentAudio.seek(progress)
   }
 
   get currentSong () {
@@ -293,9 +295,6 @@ class App extends React.Component<AppProps, AppState> {
                 playbackState={this.state.playbackState}
                 previous={this.previous}
                 next={this.next}
-                duration={this.state.duration}
-                progress={this.state.progress}
-                setProgress={this.setProgress}
                 currentSong={this.currentSong}
                 queue={this.state.queue}
               />
